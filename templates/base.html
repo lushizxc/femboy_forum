@@ -11,7 +11,8 @@
             <a class="navbar-brand" href="/">Forum</a>
             <div class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
-                    <span class="navbar-text me-3">Привет, {{ user.username }} ({{ user.role }})</span>
+                    <span class="navbar-text me-3"></span>
+                    <a href="{% url 'main_forum:detail_user' user.pk%}">{{user.username}}</a>
                     <a class="nav-link" href="{% url 'auth_system:profile_edit' %}">Профиль</a>
                     <form action="{% url 'auth_system:logout' %}" method="post" style="display:inline;">
                         {% csrf_token %}
