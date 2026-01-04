@@ -1,0 +1,17 @@
+{% extends "base.html"%}
+{% block content %}
+<h2>Добавить сообщения в тему: {{ thread.title }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div style="margin-bottom: 15px;">
+        {{ form.as_p }}
+    </div>
+    <button type="submit" style="padding: 10px 20px; background: green; color: white; border: none; cursor: pointer;">
+        Отправить
+    </button>
+</form>
+
+<br>
+<a href="{% url 'main_forum:thread_detail' thread_id %}">Отменить</a>
+{% endblock %}

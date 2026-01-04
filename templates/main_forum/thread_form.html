@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{% if object %}Редактирование ветки: {{ object.title }}{% else %}Создание новой ветки{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div style="margin-bottom: 20px;">
+        {{ form.as_p }}
+    </div>
+    <button type="submit" style="background: green; color: white; padding: 10px 20px; border: none;">
+        Сохранить
+    </button>
+    <a href="{% url 'main_forum:list' %}" style="margin-left: 10px;">Отменить</a>
+</form>
+{% endblock %}

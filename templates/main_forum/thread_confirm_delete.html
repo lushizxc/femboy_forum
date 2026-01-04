@@ -1,0 +1,11 @@
+{% extends "base.html"%}
+{% block content %}
+<h2>Удалить ветку "{{ object.title }}"?</h2>
+<p>Вы уверены? Все сообщения в этой ветке удалятся </p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="background: red; color: white;">Да удалить</button>
+    <a href="{% url 'main_forum:thread_detail' object.id %}">Отменить</a>
+</form>
+{% endblock %}

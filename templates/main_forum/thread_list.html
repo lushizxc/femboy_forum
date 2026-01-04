@@ -1,0 +1,24 @@
+{% extends "base.html"%}
+{% block content %}
+<h2>Форум</h2>
+
+{% if user.is_moder %}
+    <a href="{% url 'main_forum:thread_create' %}" style="margin-bottom: 20px; display: block;">Создать новую ветку</a>
+{% endif %}
+
+<div class="list-group">
+    {% for thread in threads %}
+        <h3><a href="{% url 'main_forum:thread_detail' thread.id %}">{{ thread.title }}</a></h3>
+        {% if user.is_moder %}
+        <div style="margin-top: 10px;">
+            <a href="{% url 'main_forum:thread_edit' thread.id %}" style="color: orange; text-decoration: none; font-size: 0.9em;">Редактировать</a>
+            <a href="{% url 'main_forum:thread_delete' thread.id %}" style="color: red; text-decoration: none; font-size: 0.9em;">Удалить</a>
+        </div>
+        {% endif %}
+        <p>{{ thread.description|truncatewords:20 }}</p>
+        <small>Автор: {{ thread.created_by }} | Создано: {{ thread.created|date:"d.m.Y" }}</small>
+    {% empty %}
+        <p>На форуме нет тем в данный момент</p>
+    {% endfor %}
+</div>
+{% endblock %}
