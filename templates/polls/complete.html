@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <div class="alert alert-success shadow-sm p-5">
+        <h1 class="display-4">Спасибо!</h1>
+        <p class="lead">Ваши ответы успешно сохранены</p>
+        <hr class="my-4">
+        <p>Можете пройти другие вопросы или вернуться к форуму</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'polls:list' %}" role="button">К списку опросов</a>
+    </div>
+</div>
+{% endblock %}
