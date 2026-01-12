@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Статистика: {{ poll.title }}</h2>
+        <a href="{% url 'polls:list' %}" class="btn btn-secondary">Назад</a>
+    </div>
+
+    {% for item in stats %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">{{ item.question }}</h5>
+            </div>
+            <div class="card-body">
+                {% for choice in item.choices %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ choice.text }}</span>
+                            <span class="fw-bold">{{ choice.num_responses }} Голосов</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-info" 
+                                 role="progressbar" 
+                                 style="width: {{ choice.percentage }}%;" 
+                                 aria-valuenow="{{ choice.percentage }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                {{ choice.percentage|floatformat:1 }}%
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

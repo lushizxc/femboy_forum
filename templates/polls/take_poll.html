@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ poll.title }}</h4>
+                    <small>Этап {{ page.order }}</small>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% for question in page.questions.all %}
+                            <div class="mb-4 p-3 border rounded bg-light">
+                                <h5>{{ forloop.counter }}. {{ question.text }}</h5>
+                                <hr>
+                                {% for choice in question.choices.all %}
+                                    <div class="form-check my-2">
+                                        <input class="form-check-input" type="radio" 
+                                               name="question_{{ question.id }}" 
+                                               id="choice_{{ choice.id }}" 
+                                               value="{{ choice.id }}" required>
+                                        <label class="form-check-label" for="choice_{{ choice.id }}">
+                                            {{ choice.text }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success px-5">
+                                {% if page.next_page_exists %} Дальше {% else %} Закончить {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

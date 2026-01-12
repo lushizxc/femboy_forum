@@ -21,5 +21,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main_forum.urls')),
     path('auth/',include('auth_system.urls',namespace='auth')),
-    path('voting/',include('voting.urls',namespace='voting')),
 ]
