@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Активные голосования</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if user.is_moder or user.is_admin %}
+            <a href="{% url 'voting:question_create' %}" class="btn btn-success">
+                + Создать опрос
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    {% for question in question_list %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <small class="text-muted">{{ question.date|date:"d.m.Y H:i" }}</small>
+                {% if question.status == 'active' %}
+                    <span class="badge bg-success">Активен</span>
+                {% else %}
+                    <span class="badge bg-secondary">Закрыт</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ question.title }}</h5>
+                <p class="card-text text-truncate">{{ question.content }}</p>
+                
+                <a href="{% url 'voting:question_detail' question.pk %}" class="btn btn-primary btn-sm">
+                    Перейти к голосованию
+                </a>
+
+                <a href="{% url 'voting:results' question.pk %}" class="btn btn-outline-info btn-sm">
+                    Результаты
+                </a>
+            </div>
+            
+            {% if user.is_moder or user.is_admin %}
+            <div class="card-footer bg-light">
+                <small class="text-muted">Управление:</small>
+                <a href="{% url 'voting:question_update' question.pk %}" class="text-warning text-decoration-none mx-2">Ред.</a>
+                <a href="{% url 'voting:question_delete' question.pk %}" class="text-danger text-decoration-none">Удалить</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center mt-5">
+        <p class="text-muted">На данный момент нет активных голосований.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-danger shadow">
+        <h3 class="alert-heading">⚠️ Удаление голосования</h3>
+        <p>Вы уверены, что хотите удалить опрос <strong>"{{ object.title }}"</strong>?</p>
+        <p class="mb-0">Это действие нельзя отменить. Все голоса пользователей будут потеряны.</p>
+        <hr>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Да, удалить</button>
+            <a href="{% url 'voting:question_list' %}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
