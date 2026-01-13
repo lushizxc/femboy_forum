@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from auth_system.models import User
-from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView,TemplateView
 from .models import Thread, Post
 from .forms import PostForm,ThreadForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from itertools import chain
+from polls.models import Poll
+from voting.models import Question as VotingQuestion
 
 class DetailUserView(DetailView):
     model = User
@@ -74,3 +77,33 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('main_forum:thread_detail', kwargs={'pk': self.kwargs['thread_id']})
+
+class IndexView(TemplateView):
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        threads = Thread.objects.all().order_by('-created')
+        polls = Poll.objects.all().order_by('-created_at')
+        voting_qs = VotingQuestion.objects.filter(status='active').order_by('-date')
+
+        for t in threads:
+            t.content_type = 'thread'
+        for p in polls:
+            p.content_type = 'poll'
+        for v in voting_qs:
+            v.content_type = 'vote'
+
+        def get_date(obj):
+            if hasattr(obj, 'created'): return obj.created
+            if hasattr(obj, 'created_at'): return obj.created_at
+            return obj.date
+
+        combined_feed = sorted(
+            chain(threads, polls, voting_qs),
+            key=get_date,
+            reverse=True
+        )
+
+        context['feed_items'] = combined_feed[:30]
+        return context

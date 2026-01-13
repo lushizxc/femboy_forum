@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<div class="reddit-layout">
+    <div class="reddit-container">
+
+        <main class="feed-column">
+
+            {% for item in feed_items %}
+                <article class="post-card">
+                    <div class="post-main">
+                        <div class="post-meta">
+                            <span class="badge-type {{ item.content_type }}">
+                                {% if item.content_type == 'thread' %}Форум
+                                {% elif item.content_type == 'poll' %}Анкета
+                                {% else %}Голосование{% endif %}
+                            </span>
+
+                            <span class="author-info">
+                                Опубликовал
+                                <b>
+                                    {% if item.content_type == 'thread' %}{{ item.created_by.username }}
+                                    {% else %}{{ item.author.username }}{% endif %}
+                                </b>
+                                •
+                                {% if item.content_type == 'thread' %}{{ item.created|timesince }}
+                                {% elif item.content_type == 'poll' %}{{ item.created_at|timesince }}
+                                {% else %}{{ item.date|timesince }}{% endif %} назад
+                            </span>
+                        </div>
+
+                        <h2 class="post-title">
+                            {% if item.content_type == 'thread' %}
+                                <a href="{% url 'main_forum:thread_detail' item.id %}" style="text-decoration: none; color: inherit;">{{ item.title }}</a>
+                            {% else %}
+                                {{ item.title }}
+                            {% endif %}
+                        </h2>
+
+                        <p class="post-description">
+                            {% if item.content_type == 'vote' %}{{ item.content|truncatewords:30 }}
+                            {% else %}{{ item.description|truncatewords:30 }}{% endif %}
+                        </p>
+
+                        <div class="post-footer">
+                            {% if item.content_type == 'thread' %}
+                                <a href="{% url 'main_forum:thread_detail' item.id %}" class="action-link">Чат</a>
+                            {% elif item.content_type == 'poll' %}
+                                {# Использование именного URL предотвращает 404 #}
+                                <a href="{% url 'polls:take_poll' item.id 1 %}" class="action-btn-solid">Пройти опрос</a>
+                            {% else %}
+                                <a href="{% url 'voting:question_detail' item.id %}" class="action-btn-orange">Голосовать</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-feed">На форуме пока нет записей.</div>
+            {% endfor %}
+        </main>
+
+        <aside class="sidebar-column">
+            <div class="community-box">
+                <div class="community-banner"></div>
+                <div class="community-content">
+                    <h5>Femboy Forum</h5>
+                    <p class="small text-muted">Все активности в одном месте.</p>
+                    <hr>
+                    {% if user.is_authenticated and user.is_staff %}
+                        <a href="{% url 'main_forum:thread_create' %}" class="sidebar-btn primary mb-2">Создать тему</a>
+                        <a href="{% url 'polls:create' %}" class="sidebar-btn outline">Создать анкету</a>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

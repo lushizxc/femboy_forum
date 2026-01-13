@@ -4,7 +4,7 @@ from .views import QuestionListView,QuestionDetailView,VoteView,ResultsView,Ques
 app_name = 'voting'
 
 urlpatterns = [
-    path('', QuestionListView.as_view(), name='question_list'),
+    path('/q_list', QuestionListView.as_view(), name='question_list'),
     path('<int:pk>/', QuestionDetailView.as_view(), name='question_detail'),
     path('<int:pk>/vote/', VoteView.as_view(), name='vote'),
     path('<int:pk>/results/', ResultsView.as_view(), name='results'),
