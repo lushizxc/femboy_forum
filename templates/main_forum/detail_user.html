@@ -1,7 +1,111 @@
-{% extends "base.html"%}
+{% extends "base.html" %}
 
-{%block content %}
-<h2>Никнейм:{{user.username}}</h2>
-<p>Роль:{{user.role}}</p>
-<p>Информация:{{user.info}}</p>
+{% block content %}
+<div class="reddit-layout">
+    <div class="reddit-container">
+
+        <aside class="sidebar-column">
+            <div class="community-box">
+                <div class="community-content" style="text-align: center; padding: 20px;">
+
+                    {% if target_user.profile_pic %}
+                        <img src="{{ target_user.profile_pic.url }}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ff69b4; margin-bottom: 10px;">
+                    {% else %}
+                        <div style="width: 120px; height: 120px; background: #eee; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: #888; font-weight: bold;">
+                            Нет фото
+                        </div>
+                    {% endif %}
+
+                    <h3>{{ target_user.username }}</h3>
+                    <p style="color: #888; margin-top: -10px;">{{ target_user.get_role_display }}</p>
+
+                    <hr>
+
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <small style="font-weight: bold; color: #aaa; text-transform: uppercase;">О себе:</small>
+                        <p style="font-size: 0.9rem; margin-top: 5px;">
+                            {{ target_user.info|default:"Пользователь ничего не написал о себе." }}
+                        </p>
+                    </div>
+
+                    {% if request.user == target_user %}
+                        <a href="{% url 'auth_system:profile_edit' %}" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                            Редактировать профиль
+                        </a>
+                    {% endif %}
+
+                    {% if request.user.is_superuser %}
+                        <a href="{% url 'main_forum:change_role' target_user.pk %}" class="btn btn-warning" style="width: 100%; margin-top: 10px;">
+                            Сменить роль (Админ)
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+
+        <main class="feed-column">
+            <h3 style="margin-bottom: 20px;">Публикации</h3>
+
+            {% for thread in threads %}
+                <div class="post-card">
+                    <div class="post-meta">
+                        <span class="badge-type thread">Тема</span> • {{ thread.created|date:"d.m.Y" }}
+                    </div>
+                    <div class="post-title">
+                        <a href="{% url 'main_forum:thread_detail' thread.id %}">{{ thread.title }}</a>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-top: 5px;">
+                        {{ thread.description|truncatewords:20 }}
+                    </p>
+                </div>
+            {% endfor %}
+
+            {% for post in posts %}
+                <div class="post-card">
+                    <div class="post-meta">
+                        <span class="badge-type" style="background: #e0e0e0; color: #333;">Комментарий</span> • {{ post.created_at|date:"d.m.Y" }}
+                        в теме <a href="{% url 'main_forum:thread_detail' post.thread.id %}" style="color: #ff69b4;">{{ post.thread.title }}</a>
+                    </div>
+                    <div style="font-size: 0.95rem; color: #333;">
+                        "{{ post.content|truncatewords:30 }}"
+                    </div>
+                    <div style="margin-top: 10px;">
+                         <a href="{% url 'main_forum:thread_detail' post.thread.id %}" class="btn btn-outline-info" style="padding: 2px 10px; font-size: 0.8rem;">Перейти к теме</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% for poll in polls %}
+                <div class="post-card">
+                    <div class="post-meta">
+                        <span class="badge-type poll">Анкета</span> • {{ poll.created_at|date:"d.m.Y" }}
+                    </div>
+                    <div class="post-title">
+                        <a href="{% url 'polls:take_poll' poll.id 1 %}">{{ poll.title }}</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% for q in questions %}
+                <div class="post-card">
+                    <div class="post-meta">
+                        <span class="badge-type vote">Голосование</span> • {{ q.date|date:"d.m.Y" }}
+                    </div>
+                    <div class="post-title">
+                        <a href="{% url 'voting:question_detail' q.id %}">{{ q.title }}</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if not threads and not posts and not polls and not questions %}
+                <div class="post-card" style="text-align: center; padding: 40px; color: #777;">
+                    <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+                    У пользователя пока нет публикаций.
+                </div>
+            {% endif %}
+
+        </main>
+
+    </div>
+</div>
 {% endblock %}

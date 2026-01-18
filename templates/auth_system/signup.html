@@ -6,7 +6,7 @@
         <div class="card shadow">
             <div class="card-body">
                 <h3 class="card-title text-center">Регистрация</h3>
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-success w-100">Создать аккаунт</button>

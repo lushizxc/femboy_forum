@@ -1,5 +1,6 @@
 from django import forms
 from .models import Post,Thread
+from auth_system.models import User
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -19,4 +20,15 @@ class ThreadForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'style': 'width: 100%; padding: 8px;'}),
             'description': forms.Textarea(attrs={'rows': 4, 'style': 'width: 100%; padding: 8px;'}),
+        }
+
+class UserRoleForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['role']
+        labels = {
+            'role': 'Выберите новую роль'
+        }
+        widgets = {
+            'role': forms.Select(attrs={'class': 'form-select'})
         }

@@ -2,7 +2,6 @@
 
 {% block content %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
 <div class="reddit-layout">
     <div class="reddit-container">
 
@@ -48,7 +47,6 @@
                             {% if item.content_type == 'thread' %}
                                 <a href="{% url 'main_forum:thread_detail' item.id %}" class="action-link">Чат</a>
                             {% elif item.content_type == 'poll' %}
-                                {# Использование именного URL предотвращает 404 #}
                                 <a href="{% url 'polls:take_poll' item.id 1 %}" class="action-btn-solid">Пройти опрос</a>
                             {% else %}
                                 <a href="{% url 'voting:question_detail' item.id %}" class="action-btn-orange">Голосовать</a>
@@ -68,9 +66,13 @@
                     <h5>Femboy Forum</h5>
                     <p class="small text-muted">Все активности в одном месте.</p>
                     <hr>
-                    {% if user.is_authenticated and user.is_staff %}
+                    {% if user.is_authenticated %}
                         <a href="{% url 'main_forum:thread_create' %}" class="sidebar-btn primary mb-2">Создать тему</a>
-                        <a href="{% url 'polls:create' %}" class="sidebar-btn outline">Создать анкету</a>
+                    {% endif %}
+
+                    {% if user.is_authenticated and user.is_staff %}
+                        <a href="{% url 'polls:create' %}" class="sidebar-btn outline mb-2">Создать анкету</a>
+                        <a href="{% url 'voting:question_create' %}" class="sidebar-btn outline">Создать голосование</a>
                     {% endif %}
                 </div>
             </div>

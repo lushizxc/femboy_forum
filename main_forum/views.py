@@ -2,7 +2,7 @@ from django.shortcuts import render
 from auth_system.models import User
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView,TemplateView
 from .models import Thread, Post
-from .forms import PostForm,ThreadForm
+from .forms import PostForm,ThreadForm,UserRoleForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from itertools import chain
@@ -11,23 +11,31 @@ from voting.models import Question as VotingQuestion
 
 class DetailUserView(DetailView):
     model = User
-    context_object_name = 'user'
-    template_name = 'detail_user.html'
+    context_object_name = 'target_user'
+    template_name = 'main_forum/detail_user.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        target_user = self.object
+
+
+        context['user_threads'] = target_user.thread_set.all().order_by('-created')
+        context['user_polls'] = target_user.poll_set.all().order_by('-created_at')
+        context['user_questions'] = target_user.question_set.all().order_by('-date')
+
+        return context
 class ThreadListView(ListView):
     model = Thread
     template_name = 'thread_list.html'
     context_object_name = 'threads'
     ordering = ['-created']
 
-class ThreadCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class ThreadCreateView(LoginRequiredMixin, CreateView):
     model = Thread
     form_class = ThreadForm
     template_name = 'main_forum/thread_form.html'
     success_url = reverse_lazy('main_forum:list')
 
-    def test_func(self):
-        return self.request.user.is_moder
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -107,3 +115,15 @@ class IndexView(TemplateView):
 
         context['feed_items'] = combined_feed[:30]
         return context
+
+
+class AdminUserRoleEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = User
+    form_class = UserRoleForm
+    template_name = 'auth_system/admin_role_edit.html'
+
+    def get_success_url(self):
+        return reverse_lazy('main_forum:detail_user', kwargs={'pk': self.object.pk})
+
+    def test_func(self):
+        return self.request.user.is_moder() or self.request.user.is_admin()

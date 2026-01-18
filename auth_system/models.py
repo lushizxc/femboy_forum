@@ -15,7 +15,8 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES,default=IS_USER)
     info = models.TextField(max_length=500, blank = True)
     birth_date = models.DateField(null = True, blank=True)
-    #позже чуть добавим сюда ещё аватарки
+    profile_pic = models.ImageField(upload_to = 'profile_pic', blank = True, null = True,default='profile_pic/default.jpg')
+
 
     def is_moder(self):
         return self.role == self.IS_MODER or self.is_staff
