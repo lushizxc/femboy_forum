@@ -1,83 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% load static %}
-<div class="reddit-layout">
-    <div class="reddit-container">
+<div class="layout-wrapper">
 
-        <main class="feed-column">
+    <main class="main-col">
+        {% for item in feed_items %}
+            <article class="card">
+                <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 10px;">
+                    <span class="badge">
+                        {% if item.content_type == 'thread' %}Форум
+                        {% elif item.content_type == 'poll' %}Анкета
+                        {% else %}Голосование{% endif %}
+                    </span>
+                </div>
 
-            {% for item in feed_items %}
-                <article class="post-card">
-                    <div class="post-main">
-                        <div class="post-meta">
-                            <span class="badge-type {{ item.content_type }}">
-                                {% if item.content_type == 'thread' %}Форум
-                                {% elif item.content_type == 'poll' %}Анкета
-                                {% else %}Голосование{% endif %}
-                            </span>
-
-                            <span class="author-info">
-                                Опубликовал
-                                <b>
-                                    {% if item.content_type == 'thread' %}{{ item.created_by.username }}
-                                    {% else %}{{ item.author.username }}{% endif %}
-                                </b>
-                                •
-                                {% if item.content_type == 'thread' %}{{ item.created|timesince }}
-                                {% elif item.content_type == 'poll' %}{{ item.created_at|timesince }}
-                                {% else %}{{ item.date|timesince }}{% endif %} назад
-                            </span>
-                        </div>
-
-                        <h2 class="post-title">
-                            {% if item.content_type == 'thread' %}
-                                <a href="{% url 'main_forum:thread_detail' item.id %}" style="text-decoration: none; color: inherit;">{{ item.title }}</a>
-                            {% else %}
-                                {{ item.title }}
-                            {% endif %}
-                        </h2>
-
-                        <p class="post-description">
-                            {% if item.content_type == 'vote' %}{{ item.content|truncatewords:30 }}
-                            {% else %}{{ item.description|truncatewords:30 }}{% endif %}
-                        </p>
-
-                        <div class="post-footer">
-                            {% if item.content_type == 'thread' %}
-                                <a href="{% url 'main_forum:thread_detail' item.id %}" class="action-link">Чат</a>
-                            {% elif item.content_type == 'poll' %}
-                                <a href="{% url 'polls:take_poll' item.id 1 %}" class="action-btn-solid">Пройти опрос</a>
-                            {% else %}
-                                <a href="{% url 'voting:question_detail' item.id %}" class="action-btn-orange">Голосовать</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </article>
-            {% empty %}
-                <div class="empty-feed">На форуме пока нет записей.</div>
-            {% endfor %}
-        </main>
-
-        <aside class="sidebar-column">
-            <div class="community-box">
-                <div class="community-banner"></div>
-                <div class="community-content">
-                    <h5>Femboy Forum</h5>
-                    <p class="small text-muted">Все активности в одном месте.</p>
-                    <hr>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'main_forum:thread_create' %}" class="sidebar-btn primary mb-2">Создать тему</a>
+                <h2>
+                    {% if item.content_type == 'thread' %}
+                        <a href="{% url 'main_forum:thread_detail' item.id %}" style="color: #333;">{{ item.title }}</a>
+                    {% else %}
+                        {{ item.title }}
                     {% endif %}
+                </h2>
 
-                    {% if user.is_authenticated and user.is_staff %}
-                        <a href="{% url 'polls:create' %}" class="sidebar-btn outline mb-2">Создать анкету</a>
-                        <a href="{% url 'voting:question_create' %}" class="sidebar-btn outline">Создать голосование</a>
+                <p>
+                    {% if item.content_type == 'vote' %}{{ item.content|truncatewords:20 }}
+                    {% else %}{{ item.description|truncatewords:20 }}{% endif %}
+                </p>
+
+                <div style="margin-top: 15px;">
+                    {% if item.content_type == 'thread' %}
+                        <a href="{% url 'main_forum:thread_detail' item.id %}" class="btn btn-secondary">Чат</a>
+                    {% elif item.content_type == 'poll' %}
+                        <a href="{% url 'polls:take_poll' item.id 1 %}" class="btn btn-primary">Пройти</a>
+                    {% else %}
+                        <a href="{% url 'voting:question_detail' item.id %}" class="btn btn-primary">Голосовать</a>
                     {% endif %}
                 </div>
-            </div>
-        </aside>
+            </article>
+        {% empty %}
+            <div class="card text-center">На форуме пока нет записей.</div>
+        {% endfor %}
+    </main>
 
-    </div>
+    <aside class="sidebar-col">
+        <div class="card text-center">
+            <div style="height: 50px; background: linear-gradient(90deg, #ff9a9e, #fecfef); margin: -25px -25px 15px -25px; border-radius: 20px 20px 0 0;"></div>
+
+            <h5>Femboy Forum</h5>
+            <p class="text-muted">Все активности в одном месте.</p>
+            <hr>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'main_forum:thread_create' %}" class="btn btn-success btn-block">Создать тему</a>
+            {% endif %}
+
+            {% if user.is_authenticated and user.is_staff %}
+                <a href="{% url 'polls:create' %}" class="btn btn-outline btn-block">Создать анкету</a>
+                <a href="{% url 'voting:question_create' %}" class="btn btn-outline btn-block">Создать голосование</a>
+            {% endif %}
+        </div>
+    </aside>
+
 </div>
 {% endblock %}

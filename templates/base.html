@@ -5,45 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Femboy Forum</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
 
 <header class="navbar">
-    <div class="navbar-container">
-        <a href="/" class="nav-logo">
-            <span class="logo-text">femboy_forum</span>
-        </a>
+    <div class="container navbar-inner">
+        <a href="/" class="nav-logo">femboy_forum</a>
 
         <nav class="nav-links">
-            <a href="{% url 'main_forum:list' %}" class="nav-item">
-                <i class="bi bi-chat-left-text"></i> Форум
-            </a>
-            <a href="{% url 'polls:list' %}" class="nav-item">
-                <i class="bi bi-card-checklist"></i> Анкеты
-            </a>
-            <a href="{% url 'voting:question_list' %}" class="nav-item">
-                <i class="bi bi-check2-square"></i> Голосования
-            </a>
+            <a href="{% url 'main_forum:list' %}">Форум</a>
+            <a href="{% url 'polls:list' %}">Анкеты</a>
+            <a href="{% url 'voting:question_list' %}">Голосования</a>
         </nav>
 
         <div class="nav-user">
             {% if user.is_authenticated %}
-                <a href="{% url 'main_forum:detail_user' user.pk %}" class="username">
-                    <img src="{{user.profile_pic.url}}" alt="{{user.username}}" class="nav-avatar">
+                <a href="{% url 'main_forum:detail_user' user.pk %}">
+                    <img src="{{ user.profile_pic.url }}" class="nav-avatar" alt="User">
                 </a>
-                <form action="{% url 'auth_system:logout' %}" method="post" style="display:inline;">
+                <form action="{% url 'auth_system:logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="logout-btn">Выйти</button>
+                    <button type="submit" class="btn btn-outline" style="padding: 5px 15px; border-radius: 20px;">Выйти</button>
                 </form>
             {% else %}
-                <a href="{% url 'auth_system:login' %}" class="login-link">Войти</a>
+                <a href="{% url 'auth_system:login' %}" class="btn btn-primary">Войти</a>
             {% endif %}
         </div>
     </div>
 </header>
 
-<main>
+<main class="container">
     {% block content %}
     {% endblock %}
 </main>

@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from .forms import QuestionForm
@@ -19,7 +20,7 @@ class QuestionDetailView(DetailView):
     context_object_name = 'question'
     template_name = 'voting/question_detail.html'
 
-class VoteView(View,LoginRequiredMixin):
+class VoteView(LoginRequiredMixin,View):
     def post(self,request,pk,*args,**kwargs):
         question = get_object_or_404(Question, pk=pk)
         try:
@@ -32,8 +33,10 @@ class VoteView(View,LoginRequiredMixin):
                 'error_message': "Вы не выбрали вариант ответа.",
             })
 
+
         else:
-            Vote.objects.update_or_create(question=question,choice=selected_choice,who_voted=request.user)
+            Vote.objects.update_or_create(question=question,who_voted=request.user,defaults={'choice':selected_choice})
+
 
         return redirect('voting:results',pk=question.pk)
 

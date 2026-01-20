@@ -1,30 +1,75 @@
-{% extends "base.html"%}
+{% extends "base.html" %}
+
 {% block content %}
-<h2>Форум</h2>
+<div class="container mt-4">
+    <div class="page-header">
+        <h1>Форум</h1>
+        {% if user.is_authenticated %}
+            <a href="{% url 'main_forum:thread_create' %}" class="btn btn-success">
+                + Создать новую ветку
+            </a>
+        {% endif %}
+    </div>
 
-{% if user.is_authenticated %}
-    <a href="{% url 'main_forum:thread_create' %}" style="margin-bottom: 20px; display: block;" class="btn btn-success">
-        + Создать новую ветку
-    </a>
-{% endif %}
+    <div class="layout-wrapper" style="flex-direction: column; align-items: stretch;">
+        {% for thread in threads %}
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div style="flex-grow: 1;">
+                        <h3 style="margin-top: 0;">
+                            <a href="{% url 'main_forum:thread_detail' thread.id %}" style="color: #333; font-weight: 800;">
+                                {{ thread.title }}
+                            </a>
+                        </h3>
 
-<div class="list-group">
-    {% for thread in threads %}
-        <div class="list-group-item">
-            <h3><a href="{% url 'main_forum:thread_detail' thread.id %}">{{ thread.title }}</a></h3>
+                        <div class="text-muted" style="font-size: 0.9rem; margin-bottom: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">{{ thread.author.username }}</span>
+                            {{ thread.created_at|date:"d.m.Y" }}
+                        </div>
 
-            {% if user.is_moder or user == thread.created_by %}
-            <div style="margin-top: 10px;">
-                <a href="{% url 'main_forum:thread_edit' thread.id %}" style="color: orange; text-decoration: none; font-size: 0.9em;">Редактировать</a>
-                <a href="{% url 'main_forum:thread_delete' thread.id %}" style="color: red; text-decoration: none; font-size: 0.9em;">Удалить</a>
+                        <p style="color: #555;">
+                            {{ thread.description|truncatewords:30 }}
+                        </p>
+                    </div>
+
+                    {% if user.is_moder or user == thread.author %}
+                        <div style="display: flex; gap: 10px; margin-left: 20px;">
+                            <a href="{% url 'main_forum:thread_edit' thread.id %}" class="btn btn-secondary" style="padding: 5px 15px; font-size: 0.85rem;">
+                                Ред.
+                            </a>
+                            <a href="{% url 'main_forum:thread_delete' thread.id %}" class="btn btn-danger" style="background: #ff6b6b; color: white; padding: 5px 15px; font-size: 0.85rem;">
+                                Удалить
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'main_forum:thread_detail' thread.id %}" class="btn btn-primary btn-sm">
+                        Перейти к обсуждению
+                    </a>
+                </div>
             </div>
-            {% endif %}
+        {% empty %}
+            <div class="card text-center" style="padding: 40px;">
+                <h3>Тем пока нет</h3>
+                <p class="text-muted">Станьте первым, кто создаст обсуждение!</p>
+                <br>
+                <a href="{% url 'main_forum:thread_create' %}" class="btn btn-success">Создать тему</a>
+            </div>
+        {% endfor %}
+    </div>
 
-            <p>{{ thread.description|truncatewords:20 }}</p>
-            <small>Автор: {{ thread.created_by }} | Создано: {{ thread.created|date:"d.m.Y" }}</small>
-        </div>
-    {% empty %}
-        <p>На форуме нет тем в данный момент</p>
-    {% endfor %}
+    {% if is_paginated %}
+    <div style="text-align: center; margin-top: 30px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">← Назад</a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Вперед →</a>
+        {% endif %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

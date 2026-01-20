@@ -1,35 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0">Новый опрос</h4>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
+<div class="container" style="max-width: 700px;">
+    <div class="card">
+        <h2 style="margin-top: 0;">Новый опрос</h2>
+        <hr>
+        <form method="post">
+            {% csrf_token %}
 
-                        <div class="mb-3">
-                            <label class="form-label">Название опроса</label>
-                            <input type="text" name="title" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Описание</label>
-                            <textarea name="description" class="form-control" rows="3"></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100">Создать</button>
-                        <a href="{% url 'polls:list' %}" class="btn btn-link w-100 mt-2 text-muted">отмена</a>
-                    </form>
-                </div>
-                <div class="card-footer bg-light small text-center">
-                    Вопросы та варианты ответов добавьте через <a href="/admin/">админку</a>.
-                </div>
+            <div>
+                <label>Название опроса</label>
+                <input type="text" name="title" required>
             </div>
+
+            <div>
+                <label>Описание</label>
+                <textarea name="description" rows="4"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать</button>
+                <a href="{% url 'polls:list' %}" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+
+        <div style="margin-top: 20px; font-size: 0.9rem; color: #888; text-align: center;">
+            Вопросы и варианты ответов добавляются через <a href="/admin/">админку</a>.
         </div>
     </div>
 </div>

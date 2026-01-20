@@ -33,7 +33,7 @@ class Vote(models.Model):
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('who_voted','question')
+        unique_together = ('who_voted','choice')
 
     def __str__(self):
         return f"{self.who_voted} -> {self.choice}"

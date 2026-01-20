@@ -19,9 +19,9 @@ class DetailUserView(DetailView):
         target_user = self.object
 
 
-        context['user_threads'] = target_user.thread_set.all().order_by('-created')
-        context['user_polls'] = target_user.poll_set.all().order_by('-created_at')
-        context['user_questions'] = target_user.question_set.all().order_by('-date')
+        context['threads'] = target_user.thread_set.all().order_by('-created')
+        context['polls'] = target_user.poll_set.all().order_by('-created_at')
+        context['questions'] = target_user.question_set.all().order_by('-date')
 
         return context
 class ThreadListView(ListView):

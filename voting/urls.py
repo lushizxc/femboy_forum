@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import QuestionListView,QuestionDetailView,VoteView,ResultsView,QuestionDeleteView,QuestionUpdateView,QuestionCreationView
+from .views import QuestionListView,QuestionDetailView,VoteView,ResultsView,QuestionDeleteView,QuestionUpdateView,QuestionCreationView,QuestionInactiveConfirmationView
 
 app_name = 'voting'
 
@@ -11,4 +11,5 @@ urlpatterns = [
     path('/create',QuestionCreationView.as_view(), name='question_create'),
     path('<int:pk>/delete',QuestionDeleteView.as_view(), name='question_delete'),
     path('<int:pk>/update',QuestionUpdateView.as_view(), name='question_update'),
+    path('<int:pk>/inactive',QuestionInactiveConfirmationView.as_view(), name='inactive'),
 ]

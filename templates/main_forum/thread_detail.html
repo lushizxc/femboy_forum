@@ -1,33 +1,43 @@
 {% extends "base.html"%}
 {% block content %}
-<h1>{{ thread.title }}</h1>
-{% if user.is_moder %}
-    <p>
-        <a href="{% url 'main_forum:thread_edit' thread.id %}">Редактировать ветку</a>
-        <a href="{% url 'main_forum:thread_delete' thread.id %}" style="color: red;">Удалить ветку</a>
-    </p>
-{% endif %}
-<p>{{ thread.description }}</p>
-<hr>
+<div class="card">
+    <div class="page-header">
+        <h1>{{ thread.title }}</h1>
+        {% if user.is_moder %}
+        <div>
+            <a href="{% url 'main_forum:thread_edit' thread.id %}" class="btn btn-secondary">Ред.</a>
+            <a href="{% url 'main_forum:thread_delete' thread.id %}" class="btn btn-danger">Удалить</a>
+        </div>
+        {% endif %}
+    </div>
+    <p style="font-size: 1.1rem;">{{ thread.description }}</p>
+</div>
 
-<h3>Сообщения:</h3>
+<h3>Сообщения</h3>
 {% for post in posts %}
-    <div style="background: #f9f9f9; padding: 15px; margin-bottom: 10px; border-radius: 5px;">
-        <strong>{{ post.author }}</strong> <small>({{ post.created_at|date:"H:i, d.m.Y" }})</small>
-        <p>{{ post.content }}</p>
+    <div class="card" style="padding: 15px; background: #fff;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <strong>{{ post.author }}</strong>
+            <small class="text-muted">{{ post.created_at|date:"H:i, d.m.Y" }}</small>
+        </div>
+        <p style="margin: 0;">{{ post.content }}</p>
     </div>
 {% empty %}
-    <p>Тут пока пусто</p>
+    <p class="text-muted">Тут пока пусто</p>
 {% endfor %}
 
-<hr>
-{% if user.is_authenticated %}
-    <h4>Ваш ответ:</h4>
-    <a href="{% url 'main_forum:post_add' thread.id %}" style="padding: 10px; background: blue; color: white; text-decoration: none;">Написать сообщение</a>
-{% else %}
-    <p><a href="{% url 'auth_system:login' %}">Войдите</a>, чтобы оставлять коментарии</p>
-{% endif %}
+<div class="card" style="margin-top: 20px;">
+    {% if user.is_authenticated %}
+        <h4>Ваш ответ:</h4>
+        <div style="margin-top: 15px;">
+            <a href="{% url 'main_forum:post_add' thread.id %}" class="btn btn-primary">Написать сообщение</a>
+        </div>
+    {% else %}
+        <p><a href="{% url 'auth_system:login' %}">Войдите</a>, чтобы оставлять комментарии</p>
+    {% endif %}
+</div>
 
-<br><br>
-<a href="{% url 'main_forum:list' %}">← Назад к списку тем</a>
+<div style="margin-top: 20px;">
+    <a href="{% url 'main_forum:list' %}">← Назад к списку тем</a>
+</div>
 {% endblock %}
